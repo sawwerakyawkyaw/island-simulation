@@ -18,6 +18,8 @@ defmodule IslandGameWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/game/:game_id/user", UserLive
+    live "/game/:game_id/admin", AdminLive
   end
 
   # Other scopes may use custom stacks.

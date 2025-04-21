@@ -21,11 +21,28 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
+import UpdateFieldValue from "./hooks/update_field_value"
+let Hooks = {};
+
+Hooks.UpdateFieldValue = UpdateFieldValue;
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
+  params: {_csrf_token: csrfToken},
+  metadata: {
+    click: (e, el) => {
+      return {
+        altKey: e.altKey,
+        ctrlKey: e.ctrlKey,
+        metaKey: e.metaKey,
+        shiftKey: e.shiftKey,
+        x: e.offsetX,
+        y: e.offsetY
+      }
+    }
+  },
+  hooks: Hooks
 })
 
 // Show progress bar on live navigation and form submits
