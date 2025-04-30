@@ -2,6 +2,24 @@ defmodule IslandGameWeb.UserLive do
   use IslandGameWeb, :live_view
   alias IslandGame.GameServer
 
+  @background_colors [
+    "rgba(255, 99, 132, 0.2)",
+    "rgba(255, 159, 64, 0.2)",
+    "rgba(255, 205, 86, 0.2)",
+    "rgba(75, 192, 192, 0.2)",
+    "rgba(54, 162, 235, 0.2)"
+  ]
+
+  @border_colors [
+    "rgb(255, 99, 132)",
+    "rgb(255, 159, 64)",
+    "rgb(255, 205, 86)",
+    "rgb(75, 192, 192)",
+    "rgb(54, 162, 235)"
+  ]
+
+  @round_labels ~w(Round-1 Round-2 Round-3 Round-4 Round-5 Round-6 Round-7 Round-8 Round-9 Round-10)
+
   @impl true
   def mount(%{"game_id" => game_id}, _session, socket) do
     user_id = Enum.random(1..999)
@@ -15,7 +33,29 @@ defmodule IslandGameWeb.UserLive do
      |> assign(:current_user, %{id: user_id, username: nil})
      |> assign(:game_data, nil)
      |> assign(:current_population, 100)
-     |> assign(:responses, [])}
+     |> assign(:responses, [])
+     |> assign(:chart_config, %{
+       type: "bar",
+       data: %{
+         labels: @round_labels,
+         datasets: [
+           %{
+             label: "Population",
+             data: [],
+             backgroundColor: Enum.at(@background_colors, rem(user_id, length(@background_colors))),
+             borderColor: Enum.at(@border_colors, rem(user_id, length(@border_colors))),
+             borderWidth: 1
+           }
+         ]
+       },
+       options: %{
+         scales: %{
+           y: %{
+             beginAtZero: true
+           }
+         }
+       }
+     })}
   end
 
   @impl true
@@ -63,6 +103,13 @@ defmodule IslandGameWeb.UserLive do
         new_population: result.new_population
       }
 
+      # Update chart data
+      updated_responses = [response | socket.assigns.responses]
+      population_by_round = Map.new(updated_responses, fn resp -> {resp.round_id, resp.new_population} end)
+      populations = Enum.map(1..10, fn round -> Map.get(population_by_round, round) end)
+
+      chart_config = put_in(socket.assigns.chart_config, [:data, :datasets, Access.at(0), :data], populations)
+
       # Broadcast the response
       IslandGameWeb.Endpoint.broadcast("response:#{socket.assigns.game_id}", "user_response", %{
         user_id: socket.assigns.current_user.id,
@@ -76,7 +123,8 @@ defmodule IslandGameWeb.UserLive do
       {:noreply,
        socket
        |> assign(:current_population, result.new_population)
-       |> assign(:responses, [response | socket.assigns.responses])}
+       |> assign(:responses, updated_responses)
+       |> assign(:chart_config, chart_config)}
     end
   end
 

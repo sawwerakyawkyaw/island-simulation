@@ -18,6 +18,8 @@ defmodule IslandGameWeb.AdminLive do
     "rgb(54, 162, 235)"
   ]
 
+  @round_labels ~w(Round-1 Round-2 Round-3 Round-4 Round-5 Round-6 Round-7 Round-8 Round-9 Round-10)
+
   @impl true
   def mount(%{"game_id" => game_id}, _session, socket) do
     topic = "response:#{game_id}"
@@ -28,16 +30,42 @@ defmodule IslandGameWeb.AdminLive do
       game_id: game_id,
       responses: %{},
       current_round: 0,
-      chart_config: %{
-        type: "line",
+      user_charts: %{}
+    )}
+  end
+
+  @impl true
+  def handle_info(%{event: "user_response", payload: response}, socket) do
+    updated = Map.update(
+      socket.assigns.responses,
+      response.user_id,
+      [response],
+      &(&1 ++ [response])
+    )
+
+    # Update individual chart configs for each user
+    user_charts = Enum.reduce(updated, %{}, fn {user_id, responses}, acc ->
+      username = case List.first(responses) do
+        %{username: username} when not is_nil(username) -> username
+        _ -> "User #{user_id}"
+      end
+
+      # Create a map of round_id to population for easier lookup
+      population_by_round = Map.new(responses, fn resp -> {resp.round_id, resp.new_population} end)
+
+      # Get populations in order of rounds, defaulting to nil for missing rounds
+      populations = Enum.map(1..5, fn round -> Map.get(population_by_round, round) end)
+
+      chart_config = %{
+        type: "bar",
         data: %{
-          labels: ~w(Year-0 Year-1 Year-2 Year-3 Year-4 Year-5),
+          labels: @round_labels,
           datasets: [
             %{
-              label: "Island Population",
-              data: [100, 250, 300, 400, 500, 600],
-              backgroundColor: @background_colors,
-              borderColor: @border_colors,
+              label: "Population",
+              data: populations,
+              backgroundColor: Enum.at(@background_colors, rem(user_id, length(@background_colors))),
+              borderColor: Enum.at(@border_colors, rem(user_id, length(@border_colors))),
               borderWidth: 1
             }
           ]
@@ -50,18 +78,11 @@ defmodule IslandGameWeb.AdminLive do
           }
         }
       }
-    )}
-  end
 
-  @impl true
-  def handle_info(%{event: "user_response", payload: response}, socket) do
-    updated = Map.update(
-      socket.assigns.responses,
-      response.user_id,
-      [response],
-      &(&1 ++ [response])
-    )
-    {:noreply, assign(socket, :responses, updated)}
+      Map.put(acc, user_id, %{username: username, config: chart_config})
+    end)
+
+    {:noreply, assign(socket, responses: updated, user_charts: user_charts)}
   end
 
   @impl true
