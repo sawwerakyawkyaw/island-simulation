@@ -21,11 +21,10 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
-import UpdateFieldValue from "./hooks/update_field_value"
+import UpdateTotalFields from "./hooks/update_total_fields"
 let Hooks = {};
 
-Hooks.UpdateFieldValue = UpdateFieldValue;
-
+Hooks.UpdateTotalFields = UpdateTotalFields;
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
