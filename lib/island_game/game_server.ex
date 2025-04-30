@@ -103,11 +103,11 @@ defmodule IslandGame.GameServer do
     The new population as an integer
   """
   def update_population(total_yield, current_population \\ 100) do
-    if total_yield >= current_population do
-      surplus = total_yield - current_population
+    surplus = total_yield - current_population
+    if surplus > 0 do
       current_population + div(surplus, 2)
     else
-      total_yield / 2
+      total_yield
     end
   end
 

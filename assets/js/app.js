@@ -22,7 +22,19 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import UpdateTotalFields from "./hooks/update_total_fields"
+import Chart from "chart.js/auto";
 let Hooks = {};
+Hooks.Chart = {
+  mounted() {
+    this.el._chart = new Chart(this.el, JSON.parse(this.el.dataset.config));
+  },
+
+  updated() {
+    const new_config = JSON.parse(this.el.dataset.config)
+    this.el._chart.data = new_config.data
+    this.el._chart.update()
+  }
+}
 
 Hooks.UpdateTotalFields = UpdateTotalFields;
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")

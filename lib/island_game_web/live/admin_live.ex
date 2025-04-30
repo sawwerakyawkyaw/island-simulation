@@ -2,13 +2,55 @@ defmodule IslandGameWeb.AdminLive do
   use Phoenix.LiveView
   alias IslandGame.GameServer
 
+  @background_colors [
+    "rgba(255, 99, 132, 0.2)",
+    "rgba(255, 159, 64, 0.2)",
+    "rgba(255, 205, 86, 0.2)",
+    "rgba(75, 192, 192, 0.2)",
+    "rgba(54, 162, 235, 0.2)"
+  ]
+
+  @border_colors [
+    "rgb(255, 99, 132)",
+    "rgb(255, 159, 64)",
+    "rgb(255, 205, 86)",
+    "rgb(75, 192, 192)",
+    "rgb(54, 162, 235)"
+  ]
+
   @impl true
   def mount(%{"game_id" => game_id}, _session, socket) do
     topic = "response:#{game_id}"
 
     if connected?(socket), do: IslandGameWeb.Endpoint.subscribe(topic)
 
-    {:ok, assign(socket, game_id: game_id, responses: %{}, current_round: 0)}
+    {:ok, assign(socket,
+      game_id: game_id,
+      responses: %{},
+      current_round: 0,
+      chart_config: %{
+        type: "line",
+        data: %{
+          labels: ~w(Year-0 Year-1 Year-2 Year-3 Year-4 Year-5),
+          datasets: [
+            %{
+              label: "Island Population",
+              data: [100, 250, 300, 400, 500, 600],
+              backgroundColor: @background_colors,
+              borderColor: @border_colors,
+              borderWidth: 1
+            }
+          ]
+        },
+        options: %{
+          scales: %{
+            y: %{
+              beginAtZero: true
+            }
+          }
+        }
+      }
+    )}
   end
 
   @impl true
