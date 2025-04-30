@@ -1,17 +1,10 @@
-const UpdateFieldValue = {
+const UpdateTotalFields = {
   mounted() {
-    this.el.addEventListener("input", (e) => {
-      const value = e.target.value;
-      const crop = e.target.id.replace("field-", "");
-      const valueSpan = document.getElementById(`value-${crop}`);
-      if (valueSpan) {
-        valueSpan.textContent = value;
-      }
-
+    this.el.addEventListener("change", (e) => {
       // Calculate total fields
       const totalFields = Array.from(
-        document.querySelectorAll('input[type="range"]')
-      ).reduce((sum, input) => sum + parseInt(input.value), 0);
+        document.querySelectorAll('select[name^="fields["]')
+      ).reduce((sum, select) => sum + parseInt(select.value), 0);
 
       const totalSpan = document.getElementById("total-fields");
       if (totalSpan) {
@@ -28,4 +21,4 @@ const UpdateFieldValue = {
   },
 };
 
-export default UpdateFieldValue;
+export default UpdateTotalFields;
