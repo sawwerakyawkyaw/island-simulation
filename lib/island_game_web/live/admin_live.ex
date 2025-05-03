@@ -21,20 +21,21 @@ defmodule IslandGameWeb.AdminLive do
   @round_labels ~w(Round-1 Round-2 Round-3 Round-4 Round-5 Round-6 Round-7 Round-8 Round-9 Round-10)
 
   @impl true
-  def mount(%{"game_id" => game_id}, _session, socket) do
-    topic = "response:#{game_id}"
+  def mount(%{"room_id" => room_id}, _session, socket) do
+    topic = "response:#{room_id}"
 
     if connected?(socket), do: IslandGameWeb.Endpoint.subscribe(topic)
 
     # Get room information
-    room_info = case GameServer.get_room(game_id) do
-      {:ok, room} -> room
-      {:error, _} -> %{id: game_id, name: "Unknown Room"}
-    end
+    room_info =
+      case GameServer.get_room(room_id) do
+        {:ok, room} -> room
+        {:error, _} -> %{id: room_id, name: "Unknown Room"}
+      end
 
     {:ok,
      assign(socket,
-       game_id: game_id,
+       room_id: room_id,
        room_name: room_info.name,
        responses: %{},
        current_round: 0,
@@ -66,7 +67,7 @@ defmodule IslandGameWeb.AdminLive do
           Map.new(responses, fn resp -> {resp.round_id, resp.new_population} end)
 
         # Get populations in order of rounds, defaulting to nil for missing rounds
-        populations = Enum.map(1..5, fn round -> Map.get(population_by_round, round) end)
+        populations = Enum.map(1..10, fn round -> Map.get(population_by_round, round) end)
 
         chart_config = %{
           type: "bar",
@@ -105,7 +106,7 @@ defmodule IslandGameWeb.AdminLive do
         {:noreply, socket}
 
       %{season: season, yields: yields} ->
-        IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.game_id}", "new_round", %{
+        IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.room_id}", "new_round", %{
           season: season,
           yields: yields,
           round_id: 1
@@ -124,7 +125,7 @@ defmodule IslandGameWeb.AdminLive do
         {:noreply, socket}
 
       %{season: season, yields: yields} ->
-        IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.game_id}", "new_round", %{
+        IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.room_id}", "new_round", %{
           season: season,
           yields: yields,
           round_id: next_round

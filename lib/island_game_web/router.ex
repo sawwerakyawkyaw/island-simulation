@@ -20,8 +20,8 @@ defmodule IslandGameWeb.Router do
     get "/", PageController, :home
     live "/home", HomeLive
     live "/lobby/:room_id", LobbyLive
-    live "/game/:game_id/user", UserLive
-    live "/game/:game_id/admin", AdminLive
+    live "/game/:room_id/user", UserLive
+    live "/game/:room_id/admin", AdminLive
   end
 
   # Other scopes may use custom stacks.

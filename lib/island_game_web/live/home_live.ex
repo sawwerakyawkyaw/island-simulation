@@ -3,13 +3,14 @@ defmodule IslandGameWeb.HomeLive do
   alias IslandGame.GameServer
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket,
-      room_id: nil,
-      room_name: nil,
-      error: nil,
-      show_username_modal: false,
-      username: nil
-    )}
+    {:ok,
+     assign(socket,
+       room_id: nil,
+       room_name: nil,
+       error: nil,
+       show_username_modal: false,
+       username: nil
+     )}
   end
 
   def handle_event("create_room", %{"room_name" => room_name}, socket) do
@@ -18,16 +19,15 @@ defmodule IslandGameWeb.HomeLive do
     case GameServer.create_room(room_id, room_name) do
       {:ok, _room} ->
         {:noreply,
-          socket
-          |> put_flash(:info, "Room created successfully!")
-          |> redirect(to: ~p"/lobby/#{room_id}")
-        }
+         socket
+         |> put_flash(:info, "Room created successfully!")
+         |> redirect(to: ~p"/lobby/#{room_id}")}
+
       {:error, _reason} ->
         {:noreply,
-          socket
-          |> put_flash(:error, "Failed to create room")
-          |> assign(error: "Failed to create room")
-        }
+         socket
+         |> put_flash(:error, "Failed to create room")
+         |> assign(error: "Failed to create room")}
     end
   end
 
@@ -37,38 +37,36 @@ defmodule IslandGameWeb.HomeLive do
         case GameServer.game_started?(room_id) do
           {:ok, true} ->
             {:noreply,
-              socket
-              |> put_flash(:error, "Game has already started")
-              |> assign(error: "Game has already started")
-            }
+             socket
+             |> put_flash(:error, "Game has already started")
+             |> assign(error: "Game has already started")}
+
           {:ok, false} ->
             {:noreply,
-              socket
-              |> assign(show_username_modal: true, room_id: room_id)
-            }
+             socket
+             |> assign(show_username_modal: true, room_id: room_id)}
+
           {:error, _reason} ->
             {:noreply,
-              socket
-              |> put_flash(:error, "Failed to check game status")
-              |> assign(error: "Failed to check game status")
-            }
+             socket
+             |> put_flash(:error, "Failed to check game status")
+             |> assign(error: "Failed to check game status")}
         end
+
       {:error, :not_found} ->
         {:noreply,
-          socket
-          |> put_flash(:error, "Room not found")
-          |> assign(error: "Invalid room ID")
-        }
+         socket
+         |> put_flash(:error, "Room not found")
+         |> assign(error: "Invalid room ID")}
     end
   end
 
   def handle_event("submit_username", %{"username" => username}, socket) do
     if String.trim(username) == "" do
       {:noreply,
-        socket
-        |> put_flash(:error, "Username cannot be empty")
-        |> assign(error: "Username cannot be empty")
-      }
+       socket
+       |> put_flash(:error, "Username cannot be empty")
+       |> assign(error: "Username cannot be empty")}
     else
       # Broadcast the username to the response topic
       IslandGameWeb.Endpoint.broadcast("response:#{socket.assigns.room_id}", "user_joined", %{
@@ -77,9 +75,8 @@ defmodule IslandGameWeb.HomeLive do
       })
 
       {:noreply,
-        socket
-        |> redirect(to: ~p"/game/#{socket.assigns.room_id}/user?username=#{username}")
-      }
+       socket
+       |> redirect(to: ~p"/game/#{socket.assigns.room_id}/user?username=#{username}")}
     end
   end
 

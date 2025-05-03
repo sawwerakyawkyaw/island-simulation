@@ -194,6 +194,7 @@ defmodule IslandGame.GameServer do
           history: []
         }
       }
+
       {:reply, {:ok, new_room}, Map.put(rooms, room_id, new_room)}
     end
   end
@@ -209,6 +210,7 @@ defmodule IslandGame.GameServer do
     case Map.get(rooms, room_id) do
       nil ->
         {:reply, {:error, :not_found}, rooms}
+
       room ->
         if room.game_started do
           {:reply, {:error, :game_already_started}, rooms}

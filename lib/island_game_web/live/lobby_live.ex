@@ -9,18 +9,17 @@ defmodule IslandGameWeb.LobbyLive do
         if connected?(socket), do: IslandGameWeb.Endpoint.subscribe(topic)
 
         {:ok,
-          socket
-          |> assign(:room_id, room_id)
-          |> assign(:room_name, room.name)
-          |> assign(:game_started, false)
-          |> assign(:joined_users, [])
-        }
+         socket
+         |> assign(:room_id, room_id)
+         |> assign(:room_name, room.name)
+         |> assign(:game_started, false)
+         |> assign(:joined_users, [])}
+
       {:error, :not_found} ->
         {:ok,
-          socket
-          |> put_flash(:error, "Room not found")
-          |> redirect(to: ~p"/")
-        }
+         socket
+         |> put_flash(:error, "Room not found")
+         |> redirect(to: ~p"/")}
     end
   end
 
@@ -28,19 +27,21 @@ defmodule IslandGameWeb.LobbyLive do
     case GameServer.start_game(socket.assigns.room_id) do
       {:ok, _game} ->
         {:noreply,
-          socket
-          |> put_flash(:info, "Game started!")
-          |> redirect(to: ~p"/game/#{socket.assigns.room_id}/admin")
-        }
+         socket
+         |> put_flash(:info, "Game started!")
+         |> redirect(to: ~p"/game/#{socket.assigns.room_id}/admin")}
+
       {:error, _reason} ->
         {:noreply,
-          socket
-          |> put_flash(:error, "Failed to start game")
-        }
+         socket
+         |> put_flash(:error, "Failed to start game")}
     end
   end
 
-  def handle_info(%{event: "user_joined", payload: %{username: username, joined_at: joined_at}}, socket) do
+  def handle_info(
+        %{event: "user_joined", payload: %{username: username, joined_at: joined_at}},
+        socket
+      ) do
     new_user = %{name: username, joined_at: joined_at}
     updated_users = [new_user | socket.assigns.joined_users]
 
@@ -50,15 +51,15 @@ defmodule IslandGameWeb.LobbyLive do
   def render(assigns) do
     ~H"""
     <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold mb-4">Room: <%= @room_name %></h1>
-      <p class="text-xl mb-4">Room ID: <%= @room_id %></p>
+      <h1 class="text-3xl font-bold mb-4">Room: {@room_name}</h1>
+      <p class="text-xl mb-4">Room ID: {@room_id}</p>
 
       <div class="mb-8">
         <h2 class="text-2xl font-semibold mb-2">Recently Joined Players:</h2>
         <ul class="list-disc pl-4">
           <%= for user <- @joined_users do %>
             <li>
-              <%= user.name %>
+              {user.name}
             </li>
           <% end %>
         </ul>
@@ -67,7 +68,8 @@ defmodule IslandGameWeb.LobbyLive do
       <button
         phx-click="start_game"
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        disabled={@game_started}>
+        disabled={@game_started}
+      >
         Start Game
       </button>
     </div>

@@ -21,15 +21,15 @@ defmodule IslandGameWeb.UserLive do
   @round_labels ~w(Round-1 Round-2 Round-3 Round-4 Round-5 Round-6 Round-7 Round-8 Round-9 Round-10)
 
   @impl true
-  def mount(%{"game_id" => game_id, "username" => username}, _session, socket) do
+  def mount(%{"room_id" => room_id, "username" => username}, _session, socket) do
     user_id = Enum.random(1..999)
-    topic = "game:#{game_id}"
+    topic = "game:#{room_id}"
 
     if connected?(socket), do: IslandGameWeb.Endpoint.subscribe(topic)
 
     {:ok,
      socket
-     |> assign(:game_id, game_id)
+     |> assign(:room_id, room_id)
      |> assign(:current_user, %{id: user_id, username: username})
      |> assign(:game_data, nil)
      |> assign(:current_population, 100)
@@ -114,7 +114,7 @@ defmodule IslandGameWeb.UserLive do
         put_in(socket.assigns.chart_config, [:data, :datasets, Access.at(0), :data], populations)
 
       # Broadcast the response
-      IslandGameWeb.Endpoint.broadcast("response:#{socket.assigns.game_id}", "user_response", %{
+      IslandGameWeb.Endpoint.broadcast("response:#{socket.assigns.room_id}", "user_response", %{
         user_id: socket.assigns.current_user.id,
         username: socket.assigns.current_user.username,
         fields: fields,
