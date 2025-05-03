@@ -1,0 +1,65 @@
+<div class="min-h-screen bg-gray-100 flex items-center justify-center">
+  <div class="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        Island Game Lobby
+      </h2>
+    </div>
+
+    <%= if @error do %>
+      <div class="rounded-md bg-red-50 p-4">
+        <div class="text-sm text-red-700">
+          <%= @error %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="space-y-6">
+      <div class="rounded-md shadow-sm -space-y-px">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Create a New Room</h3>
+        <form phx-submit="create_room" class="space-y-4">
+          <div>
+            <label for="room_name" class="sr-only">Room Name</label>
+            <input
+              id="room_name"
+              name="room_name"
+              type="text"
+              required
+              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="Enter room name"
+            />
+          </div>
+          <button
+            type="submit"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Create Room
+          </button>
+        </form>
+      </div>
+
+      <div class="rounded-md shadow-sm -space-y-px">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Join Existing Room</h3>
+        <form phx-submit="join_room" class="space-y-4">
+          <div>
+            <label for="room_id" class="sr-only">Room ID</label>
+            <input
+              id="room_id"
+              name="room_id"
+              type="text"
+              required
+              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="Enter room ID"
+            />
+          </div>
+          <button
+            type="submit"
+            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Join Room
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

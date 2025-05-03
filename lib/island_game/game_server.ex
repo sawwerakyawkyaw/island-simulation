@@ -1,7 +1,9 @@
 defmodule IslandGame.GameServer do
   @moduledoc """
-  A context module for handling game-related operations like season generation.
+  A context module for handling game-related operations like season generation. Calculating the total yield and updating the population.
   """
+
+  use GenServer
 
   @seasons [
     "Wet/Cool",
@@ -88,7 +90,7 @@ defmodule IslandGame.GameServer do
 
     Enum.reduce(field_choices, 0, fn {crop, quantity}, acc ->
       yield = season_yields[crop] || 0
-      acc + (yield * quantity)
+      acc + yield * quantity
     end)
   end
 
@@ -104,6 +106,7 @@ defmodule IslandGame.GameServer do
   """
   def update_population(total_yield, current_population \\ 100) do
     surplus = total_yield - current_population
+
     if surplus > 0 do
       current_population + div(surplus, 2)
     else
@@ -132,5 +135,55 @@ defmodule IslandGame.GameServer do
       total_yield: total_yield,
       new_population: new_population
     }
+  end
+
+  # Room management
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+  end
+
+  def init(_) do
+    {:ok, %{}}
+  end
+
+  @doc """
+  Creates a new game room with the given ID and name.
+  """
+  def create_room(room_id, room_name) do
+    GenServer.call(__MODULE__, {:create_room, room_id, room_name})
+  end
+
+  @doc """
+  Retrieves a room by its ID.
+  """
+  def get_room(room_id) do
+    GenServer.call(__MODULE__, {:get_room, room_id})
+  end
+
+  # GenServer callbacks
+  def handle_call({:create_room, room_id, room_name}, _from, rooms) do
+    if Map.has_key?(rooms, room_id) do
+      {:reply, {:error, :room_exists}, rooms}
+    else
+      new_room = %{
+        id: room_id,
+        name: room_name,
+        created_at: DateTime.utc_now(),
+        state: %{
+          current_round: 1,
+          population: 100,
+          field_choices: %{},
+          history: []
+        }
+      }
+      {:reply, {:ok, new_room}, Map.put(rooms, room_id, new_room)}
+    end
+  end
+
+  def handle_call({:get_room, room_id}, _from, rooms) do
+    case Map.get(rooms, room_id) do
+      nil -> {:reply, {:error, :not_found}, rooms}
+      room -> {:reply, {:ok, room}, rooms}
+    end
   end
 end

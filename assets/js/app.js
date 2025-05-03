@@ -24,6 +24,8 @@ import topbar from "../vendor/topbar"
 import UpdateTotalFields from "./hooks/update_total_fields"
 import Chart from "chart.js/auto";
 let Hooks = {};
+
+// Chart Hook
 Hooks.Chart = {
   mounted() {
     this.el._chart = new Chart(this.el, JSON.parse(this.el.dataset.config));
@@ -36,7 +38,9 @@ Hooks.Chart = {
   }
 }
 
+// Update Total Fields Hook
 Hooks.UpdateTotalFields = UpdateTotalFields;
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,

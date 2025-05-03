@@ -26,61 +26,74 @@ defmodule IslandGameWeb.AdminLive do
 
     if connected?(socket), do: IslandGameWeb.Endpoint.subscribe(topic)
 
-    {:ok, assign(socket,
-      game_id: game_id,
-      responses: %{},
-      current_round: 0,
-      user_charts: %{}
-    )}
+    # Get room information
+    room_info = case GameServer.get_room(game_id) do
+      {:ok, room} -> room
+      {:error, _} -> %{id: game_id, name: "Unknown Room"}
+    end
+
+    {:ok,
+     assign(socket,
+       game_id: game_id,
+       room_name: room_info.name,
+       responses: %{},
+       current_round: 0,
+       user_charts: %{}
+     )}
   end
 
   @impl true
   def handle_info(%{event: "user_response", payload: response}, socket) do
-    updated = Map.update(
-      socket.assigns.responses,
-      response.user_id,
-      [response],
-      &(&1 ++ [response])
-    )
+    updated =
+      Map.update(
+        socket.assigns.responses,
+        response.user_id,
+        [response],
+        &(&1 ++ [response])
+      )
 
     # Update individual chart configs for each user
-    user_charts = Enum.reduce(updated, %{}, fn {user_id, responses}, acc ->
-      username = case List.first(responses) do
-        %{username: username} when not is_nil(username) -> username
-        _ -> "User #{user_id}"
-      end
+    user_charts =
+      Enum.reduce(updated, %{}, fn {user_id, responses}, acc ->
+        username =
+          case List.first(responses) do
+            %{username: username} when not is_nil(username) -> username
+            _ -> "User #{user_id}"
+          end
 
-      # Create a map of round_id to population for easier lookup
-      population_by_round = Map.new(responses, fn resp -> {resp.round_id, resp.new_population} end)
+        # Create a map of round_id to population for easier lookup
+        population_by_round =
+          Map.new(responses, fn resp -> {resp.round_id, resp.new_population} end)
 
-      # Get populations in order of rounds, defaulting to nil for missing rounds
-      populations = Enum.map(1..5, fn round -> Map.get(population_by_round, round) end)
+        # Get populations in order of rounds, defaulting to nil for missing rounds
+        populations = Enum.map(1..5, fn round -> Map.get(population_by_round, round) end)
 
-      chart_config = %{
-        type: "bar",
-        data: %{
-          labels: @round_labels,
-          datasets: [
-            %{
-              label: "Population",
-              data: populations,
-              backgroundColor: Enum.at(@background_colors, rem(user_id, length(@background_colors))),
-              borderColor: Enum.at(@border_colors, rem(user_id, length(@border_colors))),
-              borderWidth: 1
-            }
-          ]
-        },
-        options: %{
-          scales: %{
-            y: %{
-              beginAtZero: true
+        chart_config = %{
+          type: "bar",
+          data: %{
+            labels: @round_labels,
+            datasets: [
+              %{
+                label: "Population",
+                data: populations,
+                backgroundColor:
+                  Enum.at(@background_colors, rem(user_id, length(@background_colors))),
+                borderColor: Enum.at(@border_colors, rem(user_id, length(@border_colors))),
+                borderWidth: 1
+              }
+            ]
+          },
+          options: %{
+            scales: %{
+              y: %{
+                beginAtZero: true
+              }
             }
           }
         }
-      }
 
-      Map.put(acc, user_id, %{username: username, config: chart_config})
-    end)
+        Map.put(acc, user_id, %{username: username, config: chart_config})
+      end)
 
     {:noreply, assign(socket, responses: updated, user_charts: user_charts)}
   end
@@ -88,7 +101,9 @@ defmodule IslandGameWeb.AdminLive do
   @impl true
   def handle_event("start_round", _params, socket) do
     case GameServer.get_season_for_round(1) do
-      nil -> {:noreply, socket}
+      nil ->
+        {:noreply, socket}
+
       %{season: season, yields: yields} ->
         IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.game_id}", "new_round", %{
           season: season,
@@ -105,7 +120,9 @@ defmodule IslandGameWeb.AdminLive do
     next_round = socket.assigns.current_round + 1
 
     case GameServer.get_season_for_round(next_round) do
-      nil -> {:noreply, socket}
+      nil ->
+        {:noreply, socket}
+
       %{season: season, yields: yields} ->
         IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.game_id}", "new_round", %{
           season: season,

@@ -17,7 +17,8 @@ defmodule IslandGame.Application do
       # Start a worker by calling: IslandGame.Worker.start_link(arg)
       # {IslandGame.Worker, arg},
       # Start to serve requests, typically the last entry
-      IslandGameWeb.Endpoint
+      IslandGameWeb.Endpoint,
+      IslandGame.GameServer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

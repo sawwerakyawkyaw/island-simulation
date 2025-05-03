@@ -42,7 +42,8 @@ defmodule IslandGameWeb.UserLive do
            %{
              label: "Population",
              data: [],
-             backgroundColor: Enum.at(@background_colors, rem(user_id, length(@background_colors))),
+             backgroundColor:
+               Enum.at(@background_colors, rem(user_id, length(@background_colors))),
              borderColor: Enum.at(@border_colors, rem(user_id, length(@border_colors))),
              borderWidth: 1
            }
@@ -70,30 +71,34 @@ defmodule IslandGameWeb.UserLive do
 
   @impl true
   def handle_event("set_username", %{"username" => username}, socket) do
-    {:noreply, assign(socket, :current_user, %{id: socket.assigns.current_user.id, username: username})}
+    {:noreply,
+     assign(socket, :current_user, %{id: socket.assigns.current_user.id, username: username})}
   end
 
   @impl true
   def handle_event("submit_response", %{"fields" => fields}, socket) do
-    total_fields = fields
-    |> Map.values()
-    |> Enum.map(&String.to_integer/1)
-    |> Enum.sum()
+    total_fields =
+      fields
+      |> Map.values()
+      |> Enum.map(&String.to_integer/1)
+      |> Enum.sum()
 
     if total_fields > 4 do
       {:noreply, put_flash(socket, :error, "Total number of fields cannot exceed 4")}
     else
       # Convert string values to integers
-      field_choices = Enum.reduce(fields, %{}, fn {crop, quantity}, acc ->
-        Map.put(acc, crop, String.to_integer(quantity))
-      end)
+      field_choices =
+        Enum.reduce(fields, %{}, fn {crop, quantity}, acc ->
+          Map.put(acc, crop, String.to_integer(quantity))
+        end)
 
       # Calculate new population
-      result = GameServer.process_round(
-        socket.assigns.game_data.season,
-        field_choices,
-        socket.assigns.current_population
-      )
+      result =
+        GameServer.process_round(
+          socket.assigns.game_data.season,
+          field_choices,
+          socket.assigns.current_population
+        )
 
       # Create response record
       response = %{
@@ -105,10 +110,14 @@ defmodule IslandGameWeb.UserLive do
 
       # Update chart data
       updated_responses = [response | socket.assigns.responses]
-      population_by_round = Map.new(updated_responses, fn resp -> {resp.round_id, resp.new_population} end)
+
+      population_by_round =
+        Map.new(updated_responses, fn resp -> {resp.round_id, resp.new_population} end)
+
       populations = Enum.map(1..10, fn round -> Map.get(population_by_round, round) end)
 
-      chart_config = put_in(socket.assigns.chart_config, [:data, :datasets, Access.at(0), :data], populations)
+      chart_config =
+        put_in(socket.assigns.chart_config, [:data, :datasets, Access.at(0), :data], populations)
 
       # Broadcast the response
       IslandGameWeb.Endpoint.broadcast("response:#{socket.assigns.game_id}", "user_response", %{
@@ -127,5 +136,4 @@ defmodule IslandGameWeb.UserLive do
        |> assign(:chart_config, chart_config)}
     end
   end
-
 end
