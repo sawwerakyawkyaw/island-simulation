@@ -2,7 +2,7 @@
   <div class="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
     <div>
       <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        Island Game Lobby
+        Island Game Home
       </h2>
     </div>
 
@@ -63,3 +63,39 @@
     </div>
   </div>
 </div>
+
+<%= if @show_username_modal do %>
+  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Enter Your Username</h3>
+      <form phx-submit="submit_username" class="space-y-4">
+        <div>
+          <label for="username" class="sr-only">Username</label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            required
+            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Enter your username"
+          />
+        </div>
+        <div class="flex space-x-4">
+          <button
+            type="submit"
+            class="flex-1 group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Join Game
+          </button>
+          <button
+            type="button"
+            phx-click="close_modal"
+            class="flex-1 group relative flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+<% end %>

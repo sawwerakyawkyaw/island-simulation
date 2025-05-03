@@ -18,7 +18,8 @@ defmodule IslandGameWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live "/lobby", LobbyLive
+    live "/home", HomeLive
+    live "/lobby/:room_id", LobbyLive
     live "/game/:game_id/user", UserLive
     live "/game/:game_id/admin", AdminLive
   end

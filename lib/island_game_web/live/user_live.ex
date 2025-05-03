@@ -21,7 +21,7 @@ defmodule IslandGameWeb.UserLive do
   @round_labels ~w(Round-1 Round-2 Round-3 Round-4 Round-5 Round-6 Round-7 Round-8 Round-9 Round-10)
 
   @impl true
-  def mount(%{"game_id" => game_id}, _session, socket) do
+  def mount(%{"game_id" => game_id, "username" => username}, _session, socket) do
     user_id = Enum.random(1..999)
     topic = "game:#{game_id}"
 
@@ -30,7 +30,7 @@ defmodule IslandGameWeb.UserLive do
     {:ok,
      socket
      |> assign(:game_id, game_id)
-     |> assign(:current_user, %{id: user_id, username: nil})
+     |> assign(:current_user, %{id: user_id, username: username})
      |> assign(:game_data, nil)
      |> assign(:current_population, 100)
      |> assign(:responses, [])
@@ -67,12 +67,6 @@ defmodule IslandGameWeb.UserLive do
   @impl true
   def handle_info({:game_update, game_data}, socket) do
     {:noreply, assign(socket, game_data: game_data)}
-  end
-
-  @impl true
-  def handle_event("set_username", %{"username" => username}, socket) do
-    {:noreply,
-     assign(socket, :current_user, %{id: socket.assigns.current_user.id, username: username})}
   end
 
   @impl true

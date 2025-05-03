@@ -160,6 +160,22 @@ defmodule IslandGame.GameServer do
     GenServer.call(__MODULE__, {:get_room, room_id})
   end
 
+  @doc """
+  Starts the game for a given room ID.
+  Returns {:ok, room} if successful, {:error, reason} if not.
+  """
+  def start_game(room_id) do
+    GenServer.call(__MODULE__, {:start_game, room_id})
+  end
+
+  @doc """
+  Checks if a game has started for a given room ID.
+  Returns true if the game has started, false otherwise.
+  """
+  def game_started?(room_id) do
+    GenServer.call(__MODULE__, {:game_started?, room_id})
+  end
+
   # GenServer callbacks
   def handle_call({:create_room, room_id, room_name}, _from, rooms) do
     if Map.has_key?(rooms, room_id) do
@@ -169,6 +185,8 @@ defmodule IslandGame.GameServer do
         id: room_id,
         name: room_name,
         created_at: DateTime.utc_now(),
+        game_started: false,
+        players: [],
         state: %{
           current_round: 1,
           population: 100,
@@ -184,6 +202,28 @@ defmodule IslandGame.GameServer do
     case Map.get(rooms, room_id) do
       nil -> {:reply, {:error, :not_found}, rooms}
       room -> {:reply, {:ok, room}, rooms}
+    end
+  end
+
+  def handle_call({:start_game, room_id}, _from, rooms) do
+    case Map.get(rooms, room_id) do
+      nil ->
+        {:reply, {:error, :not_found}, rooms}
+      room ->
+        if room.game_started do
+          {:reply, {:error, :game_already_started}, rooms}
+        else
+          updated_room = Map.put(room, :game_started, true)
+          updated_rooms = Map.put(rooms, room_id, updated_room)
+          {:reply, {:ok, updated_room}, updated_rooms}
+        end
+    end
+  end
+
+  def handle_call({:game_started?, room_id}, _from, rooms) do
+    case Map.get(rooms, room_id) do
+      nil -> {:reply, {:error, :not_found}, rooms}
+      room -> {:reply, {:ok, room.game_started}, rooms}
     end
   end
 end
