@@ -64,10 +64,10 @@ defmodule IslandGameWeb.UserLive do
     {:noreply, assign(socket, :game_data, game_data)}
   end
 
-  @impl true
-  def handle_info({:game_update, game_data}, socket) do
-    {:noreply, assign(socket, game_data: game_data)}
-  end
+  # @impl true
+  # def handle_info({:game_update, game_data}, socket) do
+  #   {:noreply, assign(socket, game_data: game_data)}
+  # end
 
   @impl true
   def handle_event("submit_response", %{"fields" => fields}, socket) do

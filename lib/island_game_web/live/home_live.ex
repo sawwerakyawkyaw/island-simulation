@@ -38,7 +38,6 @@ defmodule IslandGameWeb.HomeLive do
           {:ok, true} ->
             {:noreply,
              socket
-             |> put_flash(:error, "Game has already started")
              |> assign(error: "Game has already started")}
 
           {:ok, false} ->
@@ -56,7 +55,6 @@ defmodule IslandGameWeb.HomeLive do
       {:error, :not_found} ->
         {:noreply,
          socket
-         |> put_flash(:error, "Room not found")
          |> assign(error: "Invalid room ID")}
     end
   end
@@ -85,8 +83,8 @@ defmodule IslandGameWeb.HomeLive do
   end
 
   defp generate_room_id do
-    :crypto.strong_rand_bytes(4)
-    |> Base.encode16()
-    |> String.downcase()
+    :rand.uniform(999_999)
+    |> Integer.to_string()
+    |> String.pad_leading(6, "0")
   end
 end
