@@ -33,10 +33,13 @@
             value={@weather_params.precip_lambda}
           />
         </div>
-        <h2 class="font-semibold text-md">Temperature Threshold (°C): <span id="tempThresholdValue" class="text-gray-600">{@weather_params.threshold}</span></h2>
+        <h2 class="font-semibold text-md">
+          Temperature Threshold (°C):
+          <span id="tempThresholdValue" class="text-gray-600">{@weather_params.threshold}</span>
+        </h2>
         <div class="w-full py-2">
           <style>
-            input[type="range"] {
+            #threshold-slider {
               -webkit-appearance: none;
               width: 100%;
               height: 10px;
@@ -45,7 +48,7 @@
               outline: none;
             }
 
-            input[type="range"]::-webkit-slider-thumb {
+            #threshold-slider::-webkit-slider-thumb {
               -webkit-appearance: none;
               appearance: none;
               width: 25px;
@@ -55,7 +58,7 @@
               cursor: pointer;
             }
 
-            input[type="range"]::-moz-range-thumb {
+            #threshold-slider::-moz-range-thumb {
               width: 25px;
               height: 25px;
               background: #808080;
@@ -64,15 +67,60 @@
           </style>
           <input
             id="threshold-slider"
+            class="slider"
             name="threshold"
             type="range"
             min="1"
             max="50"
             value={@weather_params.threshold}
-            class="slider"
             phx-hook="TemperatureSlider"
           />
         </div>
+
+        <h2 class="font-semibold text-md">
+          Extreme Event Probability (%):
+          <span id="extremeEvent" class="text-gray-600">{@extreme_event_probability}</span>
+        </h2>
+        <div class="w-full py-2">
+          <style>
+            #extreme-event-slider {
+              -webkit-appearance: none;
+              width: 100%;
+              height: 10px;
+              border-radius: 5px;
+              background: black;
+              outline: none;
+            }
+
+            #extreme-event-slider::-webkit-slider-thumb {
+              -webkit-appearance: none;
+              appearance: none;
+              width: 25px;
+              height: 25px;
+              border-radius: 50%;
+              background: #808080;
+              cursor: pointer;
+            }
+
+            #extreme-event-slider::-moz-range-thumb {
+              width: 25px;
+              height: 25px;
+              background: #808080;
+              cursor: pointer;
+            }
+          </style>
+          <input
+            id="extreme-event-slider"
+            class="slider"
+            name="extreme_event_probability"
+            type="range"
+            min="0"
+            max="100"
+            value={@extreme_event_probability}
+            phx-hook="ExtremeEventSlider"
+          />
+        </div>
+
         <button
           type="submit"
           class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 phx-click-loading:ring-0"

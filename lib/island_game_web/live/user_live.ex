@@ -61,13 +61,9 @@ defmodule IslandGameWeb.UserLive do
 
   @impl true
   def handle_info(%{event: "new_round", payload: game_data}, socket) do
+    IO.inspect(game_data)
     {:noreply, assign(socket, :game_data, game_data)}
   end
-
-  # @impl true
-  # def handle_info({:game_update, game_data}, socket) do
-  #   {:noreply, assign(socket, game_data: game_data)}
-  # end
 
   @impl true
   def handle_event("submit_response", %{"fields" => fields}, socket) do
@@ -86,11 +82,15 @@ defmodule IslandGameWeb.UserLive do
           Map.put(acc, crop, String.to_integer(quantity))
         end)
 
+      # Check whether there is an extreme event
+      has_extreme_event = match?({:extreme_event, _}, socket.assigns.game_data.extreme_event)
+
       # Calculate new population
       result =
         GameServer.process_round(
           socket.assigns.game_data.season,
           field_choices,
+          has_extreme_event,
           socket.assigns.current_population
         )
 

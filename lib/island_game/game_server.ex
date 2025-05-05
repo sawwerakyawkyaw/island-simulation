@@ -32,19 +32,33 @@ defmodule IslandGame.GameServer do
     }
   }
 
+  @extreme_events %{
+    # 25% - Yearly yield drop
+    1 => "Root Rot",
+    # 25% - Yearly yield drop
+    2 => "Drought",
+    # 100% - Wecool Rice yield drop
+    3 => "Virus",
+    # 25% - Yearly yield drop
+    4 => "Late Frost",
+    # 25% - Yearly yield drop
+    5 => "Heat Wave"
+  }
+
   @doc """
   Generates a season based on temperature and precipitation parameters.
   Returns a map containing the season string and its corresponding yields.
   """
-  def simulate_round(mean_temp, std_dev_temp, lambda, threshold) do
+  def simulate_round(mean_temp, std_dev_temp, lambda, threshold, extreme_event_probability) do
     temp_value = gaussian(mean_temp, std_dev_temp)
     precipitation_value = exponential(lambda)
+    extreme_event = gaussian_random_event(extreme_event_probability)
 
     temperature = if temp_value > threshold, do: "Hot", else: "Cool"
     precipitation = if precipitation_value < 0.5, do: "Dry", else: "Wet"
 
     season = "#{precipitation}/#{temperature}"
-    %{season: season, yields: @yields[season]}
+    %{season: season, yields: @yields[season], extreme_event: extreme_event}
   end
 
   @doc """
@@ -92,6 +106,7 @@ defmodule IslandGame.GameServer do
   ## Parameters
     - season: The current season
     - field_choices: A map of crop names to quantities planted
+    - extreme_event: The extreme event tuple or :no_event atom
     - current_population: The current population (defaults to 100)
 
   ## Returns
@@ -99,15 +114,17 @@ defmodule IslandGame.GameServer do
       - total_yield: The calculated total yield
       - new_population: The updated population
   """
-  def process_round(season, field_choices, current_population \\ 100) do
+  def process_round(season, field_choices, has_extreme_event, current_population \\ 100) do
     total_yield = calculate_total_yield(season, field_choices)
-    new_population = update_population(total_yield, current_population)
+    adjusted_yield = if has_extreme_event, do: trunc(total_yield * 0.75), else: total_yield
+    new_population = update_population(adjusted_yield, current_population)
 
     %{
-      total_yield: total_yield,
+      total_yield: adjusted_yield,
       new_population: new_population
     }
   end
+
 
   # Room management
   def start_link(_) do
@@ -211,5 +228,23 @@ defmodule IslandGame.GameServer do
 
   defp exponential(lambda) when lambda > 0 do
     -:math.log(1 - :rand.uniform()) / lambda
+  end
+
+  # Use :rand.normal/2 → mean and std dev
+  defp gaussian_random_event(probability) do
+    # Centered at slider value, e.g., 0–100
+    mean = probability
+    # You can tweak this to adjust spread
+    std_dev = 15
+
+    value = :rand.normal(mean, std_dev) |> Float.round() |> trunc
+    value = max(min(value, 100), 0)
+
+    if value > 60 do
+      # Pick a random event from the map
+      {:extreme_event, Enum.random(Map.values(@extreme_events))}
+    else
+      {:no_event}
+    end
   end
 end

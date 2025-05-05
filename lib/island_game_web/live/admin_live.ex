@@ -50,7 +50,8 @@ defmodule IslandGameWeb.AdminLive do
        responses: %{},
        current_round: 0,
        user_charts: %{},
-       weather_params: @default_weather_params
+       weather_params: @default_weather_params,
+       extreme_event_probability: 20
      )}
   end
 
@@ -120,7 +121,8 @@ defmodule IslandGameWeb.AdminLive do
           "mean_temp" => mean,
           "std_dev_temp" => std_dev,
           "precip_lambda" => lambda,
-          "threshold" => threshold
+          "threshold" => threshold,
+          "extreme_event_probability" => extreme_event_probability
         },
         socket
       ) do
@@ -138,7 +140,8 @@ defmodule IslandGameWeb.AdminLive do
       to_float.(mean),
       to_float.(std_dev),
       to_float.(lambda),
-      String.to_integer(threshold)
+      String.to_integer(threshold),
+      String.to_integer(extreme_event_probability)
     }
 
     # Update weather params in socket assigns
@@ -153,19 +156,22 @@ defmodule IslandGameWeb.AdminLive do
            elem(parsed, 0),
            elem(parsed, 1),
            elem(parsed, 2),
-           elem(parsed, 3)
+           elem(parsed, 3),
+           elem(parsed, 4)
          ) do
-      %{season: season, yields: yields} ->
+      %{season: season, yields: yields, extreme_event: extreme_event} ->
         IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.room_id}", "new_round", %{
           season: season,
           yields: yields,
+          extreme_event: extreme_event,
           round_id: current_round
         })
 
         {:noreply,
          socket
          |> assign(:current_round, current_round)
-         |> assign(:weather_params, updated_weather_params)}
+         |> assign(:weather_params, updated_weather_params)
+         |> assign(:extreme_event_probability, elem(parsed, 4))}
     end
   end
 end

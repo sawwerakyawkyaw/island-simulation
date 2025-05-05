@@ -23,6 +23,7 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import UpdateTotalFields from "./hooks/update_total_fields";
 import TemperatureSlider from "./hooks/temperature_slider";
+import ExtremeEventSlider from "./hooks/extreme_event_slider";
 import Chart from "chart.js/auto";
 let Hooks = {};
 
@@ -44,6 +45,9 @@ Hooks.UpdateTotalFields = UpdateTotalFields;
 
 // Temperature Slider Hook
 Hooks.TemperatureSlider = TemperatureSlider;
+
+// Extreme Event Slider Hook
+Hooks.ExtremeEventSlider = ExtremeEventSlider;
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
