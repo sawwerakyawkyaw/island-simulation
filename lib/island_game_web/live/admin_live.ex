@@ -2,6 +2,13 @@ defmodule IslandGameWeb.AdminLive do
   use Phoenix.LiveView
   alias IslandGame.GameServer
 
+  @default_weather_params %{
+    mean_temp: 25.0,
+    std_dev_temp: 2.0,
+    precip_lambda: 1.0,
+    threshold: 27
+  }
+
   @background_colors [
     "rgba(255, 99, 132, 0.2)",
     "rgba(255, 159, 64, 0.2)",
@@ -18,7 +25,10 @@ defmodule IslandGameWeb.AdminLive do
     "rgb(54, 162, 235)"
   ]
 
-  @round_labels ~w(Round-1 Round-2 Round-3 Round-4 Round-5 Round-6 Round-7 Round-8 Round-9 Round-10)
+  defp generate_round_labels(current_round) do
+    1..current_round
+    |> Enum.map(&"Round-#{&1}")
+  end
 
   @impl true
   def mount(%{"room_id" => room_id}, _session, socket) do
@@ -39,7 +49,8 @@ defmodule IslandGameWeb.AdminLive do
        room_name: room_info.name,
        responses: %{},
        current_round: 0,
-       user_charts: %{}
+       user_charts: %{},
+       weather_params: @default_weather_params
      )}
   end
 
@@ -67,12 +78,15 @@ defmodule IslandGameWeb.AdminLive do
           Map.new(responses, fn resp -> {resp.round_id, resp.new_population} end)
 
         # Get populations in order of rounds, defaulting to nil for missing rounds
-        populations = Enum.map(1..10, fn round -> Map.get(population_by_round, round) end)
+        populations =
+          Enum.map(1..socket.assigns.current_round, fn round ->
+            Map.get(population_by_round, round)
+          end)
 
         chart_config = %{
           type: "bar",
           data: %{
-            labels: @round_labels,
+            labels: generate_round_labels(socket.assigns.current_round),
             datasets: [
               %{
                 label: "Population",
@@ -100,38 +114,58 @@ defmodule IslandGameWeb.AdminLive do
   end
 
   @impl true
-  def handle_event("start_round", _params, socket) do
-    case GameServer.get_season_for_round(1) do
-      nil ->
-        {:noreply, socket}
+  def handle_event(
+        "simulate",
+        %{
+          "mean_temp" => mean,
+          "std_dev_temp" => std_dev,
+          "precip_lambda" => lambda,
+          "threshold" => threshold
+        },
+        socket
+      ) do
+    current_round = socket.assigns.current_round + 1
 
-      %{season: season, yields: yields} ->
-        IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.room_id}", "new_round", %{
-          season: season,
-          yields: yields,
-          round_id: 1
-        })
-
-        {:noreply, assign(socket, :current_round, 1)}
+    # Helper function to safely convert string to float
+    to_float = fn str ->
+      case Float.parse(str) do
+        {float, _} -> float
+        :error -> String.to_integer(str) * 1.0
+      end
     end
-  end
 
-  @impl true
-  def handle_event("next_round", _params, socket) do
-    next_round = socket.assigns.current_round + 1
+    parsed = {
+      to_float.(mean),
+      to_float.(std_dev),
+      to_float.(lambda),
+      String.to_integer(threshold)
+    }
 
-    case GameServer.get_season_for_round(next_round) do
-      nil ->
-        {:noreply, socket}
+    # Update weather params in socket assigns
+    updated_weather_params = %{
+      mean_temp: elem(parsed, 0),
+      std_dev_temp: elem(parsed, 1),
+      precip_lambda: elem(parsed, 2),
+      threshold: elem(parsed, 3)
+    }
 
+    case GameServer.simulate_round(
+           elem(parsed, 0),
+           elem(parsed, 1),
+           elem(parsed, 2),
+           elem(parsed, 3)
+         ) do
       %{season: season, yields: yields} ->
         IslandGameWeb.Endpoint.broadcast("game:#{socket.assigns.room_id}", "new_round", %{
           season: season,
           yields: yields,
-          round_id: next_round
+          round_id: current_round
         })
 
-        {:noreply, assign(socket, :current_round, next_round)}
+        {:noreply,
+         socket
+         |> assign(:current_round, current_round)
+         |> assign(:weather_params, updated_weather_params)}
     end
   end
 end

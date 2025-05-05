@@ -5,13 +5,6 @@ defmodule IslandGame.GameServer do
 
   use GenServer
 
-  @seasons [
-    "Wet/Cool",
-    "Wet/Hot",
-    "Dry/Cool",
-    "Dry/Hot"
-  ]
-
   @yields %{
     "Wet/Cool" => %{
       "Wecool Rice" => 100,
@@ -39,18 +32,19 @@ defmodule IslandGame.GameServer do
     }
   }
 
-  # Generate 10 random seasons by selecting from the 4 possible seasons
-  @random_seasons Enum.map(1..10, fn _ -> Enum.random(@seasons) end)
-
   @doc """
-  Gets a season and its yields for a specific round.
-  Returns nil if the round is out of bounds.
+  Generates a season based on temperature and precipitation parameters.
+  Returns a map containing the season string and its corresponding yields.
   """
-  def get_season_for_round(round) when is_integer(round) and round > 0 and round <= 10 do
-    case Enum.at(@random_seasons, round - 1) do
-      nil -> nil
-      season -> %{season: season, yields: @yields[season]}
-    end
+  def simulate_round(mean_temp, std_dev_temp, lambda, threshold) do
+    temp_value = gaussian(mean_temp, std_dev_temp)
+    precipitation_value = exponential(lambda)
+
+    temperature = if temp_value > threshold, do: "Hot", else: "Cool"
+    precipitation = if precipitation_value < 0.5, do: "Dry", else: "Wet"
+
+    season = "#{precipitation}/#{temperature}"
+    %{season: season, yields: @yields[season]}
   end
 
   @doc """
@@ -120,10 +114,6 @@ defmodule IslandGame.GameServer do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  def init(_) do
-    {:ok, %{}}
-  end
-
   @doc """
   Creates a new game room with the given ID and name.
   """
@@ -152,6 +142,11 @@ defmodule IslandGame.GameServer do
   """
   def game_started?(room_id) do
     GenServer.call(__MODULE__, {:game_started?, room_id})
+  end
+
+  # Server Callbacks
+  def init(_) do
+    {:ok, %{}}
   end
 
   # GenServer callbacks
@@ -205,5 +200,16 @@ defmodule IslandGame.GameServer do
       nil -> {:reply, {:error, :not_found}, rooms}
       room -> {:reply, {:ok, room.game_started}, rooms}
     end
+  end
+
+  defp gaussian(mean, std_dev) do
+    x = :rand.uniform()
+    y = :rand.uniform()
+    z = :math.sqrt(-2 * :math.log(x)) * :math.cos(2 * :math.pi() * y)
+    z * std_dev + mean
+  end
+
+  defp exponential(lambda) when lambda > 0 do
+    -:math.log(1 - :rand.uniform()) / lambda
   end
 end

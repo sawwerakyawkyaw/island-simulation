@@ -1,30 +1,87 @@
 <div class="max-w-4xl mx-auto p-6">
   <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
     <h2 class="text-2xl font-bold text-gray-800 mb-4">Admin Panel</h2>
-    <div class="grid grid-cols-2 gap-4 mb-4">
-      <div>
-        <span class="font-medium text-gray-600">Room ID:</span>
-        <span class="ml-2 text-gray-900">{@room_id}</span>
-      </div>
-      <div>
-        <span class="font-medium text-gray-600">Room Name:</span>
-        <span class="ml-2 text-gray-900">{@room_name}</span>
-      </div>
+    <div class="flex mb-6">
+      <form phx-submit="simulate" class="space-y-2">
+        <h2 class="font-semibold text-md">Mean Temperature (°C)</h2>
+        <div>
+          <input
+            name="mean_temp"
+            type="text"
+            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-950 focus:border-gray-950 focus:z-10 sm:text-sm"
+            placeholder="Mean Temperature (°C)"
+            value={@weather_params.mean_temp}
+          />
+        </div>
+        <h2 class="font-semibold text-md">Temperature Distribution Standard Deviation</h2>
+        <div>
+          <input
+            name="std_dev_temp"
+            type="text"
+            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-950 focus:border-gray-950 focus:z-10 sm:text-sm"
+            placeholder="Temp SD"
+            value={@weather_params.std_dev_temp}
+          />
+        </div>
+        <h2 class="font-semibold text-md">Precipitation Lambda</h2>
+        <div>
+          <input
+            name="precip_lambda"
+            type="text"
+            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-950 focus:border-gray-950 focus:z-10 sm:text-sm"
+            placeholder="Precip Lambda"
+            value={@weather_params.precip_lambda}
+          />
+        </div>
+        <h2 class="font-semibold text-md">Temperature Threshold (°C): <span id="tempThresholdValue" class="text-gray-600">{@weather_params.threshold}</span></h2>
+        <div class="w-full py-2">
+          <style>
+            input[type="range"] {
+              -webkit-appearance: none;
+              width: 100%;
+              height: 10px;
+              border-radius: 5px;
+              background: linear-gradient(to right, blue 0%, red 100%);
+              outline: none;
+            }
+
+            input[type="range"]::-webkit-slider-thumb {
+              -webkit-appearance: none;
+              appearance: none;
+              width: 25px;
+              height: 25px;
+              border-radius: 50%;
+              background: #808080;
+              cursor: pointer;
+            }
+
+            input[type="range"]::-moz-range-thumb {
+              width: 25px;
+              height: 25px;
+              background: #808080;
+              cursor: pointer;
+            }
+          </style>
+          <input
+            id="threshold-slider"
+            name="threshold"
+            type="range"
+            min="1"
+            max="50"
+            value={@weather_params.threshold}
+            class="slider"
+            phx-hook="TemperatureSlider"
+          />
+        </div>
+        <button
+          type="submit"
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 phx-click-loading:ring-0"
+        >
+          Simulate
+        </button>
+      </form>
     </div>
-    <div class="flex gap-4 mb-6">
-      <button
-        phx-click="start_round"
-        class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-md"
-      >
-        Start New Round
-      </button>
-      <button
-        phx-click="next_round"
-        class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-md"
-      >
-        Next Round
-      </button>
-    </div>
+
     <div class="text-gray-600">
       <span class="font-medium">Current Round:</span> {@current_round}
     </div>
