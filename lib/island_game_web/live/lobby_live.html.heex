@@ -1,27 +1,46 @@
-<div class="px-4 py-0 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-2xl">
-    <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold mb-4">Room: {@room_name}</h1>
-      <p class="text-xl mb-4">Room ID: {@room_id}</p>
-
-      <div class="mb-8">
-        <h2 class="text-2xl font-semibold mb-2">Recently Joined Players:</h2>
-        <ul class="list-disc pl-4">
-          <%= for user <- @joined_users do %>
-            <li>
-              {user.name}
-            </li>
-          <% end %>
-        </ul>
+<div class="min-h-screen flex items-center justify-center px-4 py-0 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-2xl w-full">
+    <div class="p-6 max-w-md mx-auto bg-white border border-gray-200 rounded-lg shadow-sm space-y-6">
+      <div class="text-lg font-semibold">
+        <span class="text-gray-800 text-2xl font-bold">{@room_name}</span>
       </div>
 
-      <button
-        phx-click="start_game"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        disabled={@game_started}
-      >
-        Start Game
-      </button>
+      <hr class="my-4 border-gray-200" />
+
+      <div class="flex justify-between items-center space-x-4">
+        <div>
+          <div class="font-bold text-base">Game ID</div>
+          <div class="font-extrabold text-[3.5rem] tracking-wider text-gray-950 leading-none">
+            {@room_id}
+          </div>
+        </div>
+      </div>
+
+      <p class="text-sm text-slate-500">
+        Waiting for other players to join.
+      </p>
+
+      <div class="mb-8">
+        <div class="max-h-[180px] overflow-y-auto space-y-3">
+          <%= for user <- @joined_users do %>
+            <div class="border border-gray-200 rounded-lg p-3 bg-white">
+              <span class="text-gray-700 font-medium">
+                {user.name}
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button
+          phx-click="start_game"
+          disabled={@game_started}
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        >
+          START THE GAME
+        </button>
+      </div>
     </div>
   </div>
 </div>
