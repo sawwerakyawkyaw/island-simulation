@@ -18,8 +18,6 @@ defmodule IslandGameWeb.UserLive do
     "rgb(54, 162, 235)"
   ]
 
-  @round_labels ~w(Round-1 Round-2 Round-3 Round-4 Round-5 Round-6 Round-7 Round-8 Round-9 Round-10)
-
   @impl true
   def mount(%{"room_id" => room_id, "username" => username}, _session, socket) do
     user_id = Enum.random(1..999)
@@ -37,7 +35,7 @@ defmodule IslandGameWeb.UserLive do
      |> assign(:chart_config, %{
        type: "bar",
        data: %{
-         labels: @round_labels,
+         labels: generate_round_labels(10),
          datasets: [
            %{
              label: "Population",
@@ -129,5 +127,10 @@ defmodule IslandGameWeb.UserLive do
        |> assign(:responses, updated_responses)
        |> assign(:chart_config, chart_config)}
     end
+  end
+
+  defp generate_round_labels(current_round) do
+    1..current_round
+    |> Enum.map(&"Round-#{&1}")
   end
 end
