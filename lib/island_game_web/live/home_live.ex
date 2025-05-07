@@ -1,6 +1,7 @@
 defmodule IslandGameWeb.HomeLive do
   use IslandGameWeb, :live_view
   alias IslandGame.GameServer
+  require Logger
 
   def mount(_params, _session, socket) do
     {:ok,
@@ -15,15 +16,20 @@ defmodule IslandGameWeb.HomeLive do
 
   def handle_event("create_room", %{"room_name" => room_name}, socket) do
     room_id = generate_room_id()
+    Logger.info("Attempting to create room with ID: #{room_id} and name: #{room_name}")
 
     case GameServer.create_room(room_id, room_name) do
-      {:ok, _room} ->
+      {:ok, room} ->
+        Logger.info("Room created successfully: #{inspect(room)}")
+
         {:noreply,
          socket
          |> put_flash(:info, "Room created successfully!")
          |> redirect(to: ~p"/lobby/#{room_id}")}
 
-      {:error, _reason} ->
+      {:error, reason} ->
+        Logger.error("Failed to create room: #{inspect(reason)}")
+
         {:noreply,
          socket
          |> put_flash(:error, "Failed to create room")

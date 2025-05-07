@@ -1,10 +1,14 @@
 defmodule IslandGameWeb.LobbyLive do
   use IslandGameWeb, :live_view
   alias IslandGame.GameServer
+  require Logger
 
   def mount(%{"room_id" => room_id}, _session, socket) do
+    Logger.info("Attempting to mount lobby for room: #{room_id}")
+
     case GameServer.get_room(room_id) do
       {:ok, room} ->
+        Logger.info("Successfully found room: #{inspect(room)}")
         topic = "response:#{room_id}"
         if connected?(socket), do: IslandGameWeb.Endpoint.subscribe(topic)
 
@@ -16,6 +20,8 @@ defmodule IslandGameWeb.LobbyLive do
          |> assign(:joined_users, [])}
 
       {:error, :not_found} ->
+        Logger.error("Room not found: #{room_id}")
+
         {:ok,
          socket
          |> put_flash(:error, "Room not found")

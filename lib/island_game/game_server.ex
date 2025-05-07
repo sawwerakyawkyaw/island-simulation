@@ -125,7 +125,7 @@ defmodule IslandGame.GameServer do
     }
   end
 
-  # Room management
+  # Client API
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
@@ -165,7 +165,6 @@ defmodule IslandGame.GameServer do
     {:ok, %{}}
   end
 
-  # GenServer callbacks
   def handle_call({:create_room, room_id, room_name}, _from, rooms) do
     if Map.has_key?(rooms, room_id) do
       {:reply, {:error, :room_exists}, rooms}
