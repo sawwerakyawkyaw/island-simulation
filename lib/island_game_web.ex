@@ -93,6 +93,9 @@ defmodule IslandGameWeb do
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 
+      # Use custom UI components
+      use IslandGameWeb.Components.UI
+
       # Routes generation with the ~p sigil
       unquote(verified_routes())
     end
