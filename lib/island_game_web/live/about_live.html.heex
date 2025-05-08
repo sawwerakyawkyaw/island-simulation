@@ -3,19 +3,22 @@
     <h2 class="font-bold text-[2rem] pb-4">about this project</h2>
     <p class="text-[1rem] font-light pb-4">
       <a
-          class="text-gray-950 hover:text-teal-500 hover:no-underline hover:font-bold transition-all duration-300 ease-in-out underline underline-offset-4 decoration-indigo-700 decoration-2"
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://sawwerakyawkyaw.com"
-        >
-          Saw Wera Kyaw Kyaw
-        </a>
-        & <a
-          class="text-gray-950 hover:text-teal-500 hover:no-underline hover:font-bold transition-all duration-300 ease-in-out underline underline-offset-4 decoration-indigo-700 decoration-2"
-          target="_blank"
-          rel="noopener noreferrer"
-          href=""
-        >Sarah Maldonado</a>
+        class="text-gray-950 hover:text-teal-500 hover:no-underline hover:font-bold transition-all duration-300 ease-in-out underline underline-offset-4 decoration-indigo-700 decoration-2"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://sawwerakyawkyaw.com"
+      >
+        Saw Wera Kyaw Kyaw
+      </a>
+      &
+      <a
+        class="text-gray-950 hover:text-teal-500 hover:no-underline hover:font-bold transition-all duration-300 ease-in-out underline underline-offset-4 decoration-indigo-700 decoration-2"
+        target="_blank"
+        rel="noopener noreferrer"
+        href=""
+      >
+        Sarah Maldonado
+      </a>
       developed this project for GEOG-257 final project.
     </p>
     <p class="text-[1rem] font-light pb-4">
@@ -27,7 +30,7 @@
     </p>
     <h2 class="font-bold text-[2rem] pb-4">how</h2>
     <p class="text-[1rem] font-light pb-4">
-    Island Sims relies on probability distributions to calculate the weather for each round. At the beginning of the game, the instructor inputs a mean temperature (in Celsius) and standard deviation for temperature and lambda for precipitation. The mean and standard deviation are entered as inputs to the Gaussian function to generate a normally distributed number (temperature) for that round. Then, comparing the returned temperature value to the temperature threshold, which can be altered by the instructor each round, the round is assigned “Hot” or “Cool”. Similarly, the lambda inputted by the instructor is entered as an input into our exponential distribution function to generate an exponentially distributed random number. Then, if the value returned is below 0.5, the round is assigned “Dry”; if the value is above 0.5, the round is considered “Rainy”.  Notably, smaller lambda values that are closer to 0 increase the likelihood of higher precipitation values and thus more “Rainy” rounds, compared to larger lambda values that increase the likelihood of “Dry” rounds.
+      Island Sims relies on probability distributions to calculate the weather for each round. At the beginning of the game, the instructor inputs a mean temperature (in Celsius) and standard deviation for temperature and lambda for precipitation. The mean and standard deviation are entered as inputs to the Gaussian function to generate a normally distributed number (temperature) for that round. Then, comparing the returned temperature value to the temperature threshold, which can be altered by the instructor each round, the round is assigned “Hot” or “Cool”. Similarly, the lambda inputted by the instructor is entered as an input into our exponential distribution function to generate an exponentially distributed random number. Then, if the value returned is below 0.5, the round is assigned “Dry”; if the value is above 0.5, the round is considered “Rainy”.  Notably, smaller lambda values that are closer to 0 increase the likelihood of higher precipitation values and thus more “Rainy” rounds, compared to larger lambda values that increase the likelihood of “Dry” rounds.
     </p>
     <%!-- <h3 class="font-bold text-[1.25rem] pb-4">overview</h3>
     <ul class="list-disc pl-4">
