@@ -22,7 +22,7 @@ defmodule IslandGameWeb.Router do
     live "/lobby/:room_id", LobbyLive
     live "/game/:room_id/user", UserLive
     live "/game/:room_id/admin", AdminLive
-    live "/landing", LandingLive
+    live "/about", AboutLive
   end
 
   # Other scopes may use custom stacks.

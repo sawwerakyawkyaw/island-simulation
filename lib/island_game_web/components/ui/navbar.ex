@@ -10,7 +10,7 @@ defmodule IslandGameWeb.Components.UI.Navbar do
 
   def navbar(assigns) do
     ~H"""
-    <div class="fixed top-0 flex w-full justify-center bg-white/0 z-30 transition-all">
+    <nav class="fixed top-0 flex w-full justify-center bg-white/30 backdrop-blur-md border-b border-gray-200/20 z-30 transition-all duration-300">
       <div class="mx-5 flex h-16 w-full max-w-screen-xl flex-row items-center justify-between">
         <a class="flex flex-row items-center gap-2 font-display text-2xl" href="/home">
           <svg
@@ -30,7 +30,7 @@ defmodule IslandGameWeb.Components.UI.Navbar do
           <span class="font-normal">Island Sims</span>
         </a>
       </div>
-    </div>
+    </nav>
     """
   end
 end

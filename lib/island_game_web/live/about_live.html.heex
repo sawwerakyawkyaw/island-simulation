@@ -1,0 +1,199 @@
+<div class="items-left z-10 m-auto flex min-h-screen w-full flex-col justify-start gap-4 p-4 *:z-10 md:max-w-xl">
+  <div class="max-w-4xl mx-auto px-4 pt-16 pb-12">
+    <h2 class="font-bold text-[2rem] pb-4">about this project</h2>
+    <p class="text-[1rem] font-light pb-4">
+      <a
+          class="text-gray-950 hover:text-teal-500 hover:no-underline hover:font-bold transition-all duration-300 ease-in-out underline underline-offset-4 decoration-indigo-700 decoration-2"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://sawwerakyawkyaw.com"
+        >
+          Saw Wera Kyaw Kyaw
+        </a>
+        & <a
+          class="text-gray-950 hover:text-teal-500 hover:no-underline hover:font-bold transition-all duration-300 ease-in-out underline underline-offset-4 decoration-indigo-700 decoration-2"
+          target="_blank"
+          rel="noopener noreferrer"
+          href=""
+        >Sarah Maldonado</a>
+      developed this project for GEOG-257 final project.
+    </p>
+    <p class="text-[1rem] font-light pb-4">
+      The Island Sims is a multiplayer, real-time strategy game where players manage farms on a fictional island with dynamic weather patterns. Each player oversees eight farms, selecting crops each season to optimize yields and sustain a growing population. The game features a lobby system where a host sets up customizable game settings, such as weather probabilities and extreme events, and players join via a unique ID, similar to a Kahoot-style interface. The core gameplay loop involves yearly rounds where players choose crops, weather is revealed, and yields are calculated, impacting population growth or decline based on surplus or deficit.
+    </p>
+    <h2 class="font-bold text-[2rem] pb-4">why</h2>
+    <p class="text-[1rem] font-light pb-4">
+      This project provides an engaging way to explore resource management and decision-making under uncertainty, reflecting real-world agricultural challenges influenced by unpredictable weather. It fosters strategic thinking and collaboration among players, as they must adapt to shared environmental conditions. The game allows users to learn about the impact of climate change, which leads to higher chances of tail risk events, such as extreme weather patterns that can devastate crops and populations. The multiplayer aspect encourages social interaction and competition, making it a unique educational tool for understanding ecological and economic systems. By simulating the interplay between weather, crops, and population dynamics, the game highlights the importance of sustainable farming practices in a fun, interactive format.
+    </p>
+    <h2 class="font-bold text-[2rem] pb-4">how</h2>
+    <p class="text-[1rem] font-light pb-4">
+    Island Sims relies on probability distributions to calculate the weather for each round. At the beginning of the game, the instructor inputs a mean temperature (in Celsius) and standard deviation for temperature and lambda for precipitation. The mean and standard deviation are entered as inputs to the Gaussian function to generate a normally distributed number (temperature) for that round. Then, comparing the returned temperature value to the temperature threshold, which can be altered by the instructor each round, the round is assigned “Hot” or “Cool”. Similarly, the lambda inputted by the instructor is entered as an input into our exponential distribution function to generate an exponentially distributed random number. Then, if the value returned is below 0.5, the round is assigned “Dry”; if the value is above 0.5, the round is considered “Rainy”.  Notably, smaller lambda values that are closer to 0 increase the likelihood of higher precipitation values and thus more “Rainy” rounds, compared to larger lambda values that increase the likelihood of “Dry” rounds.
+    </p>
+    <%!-- <h3 class="font-bold text-[1.25rem] pb-4">overview</h3>
+    <ul class="list-disc pl-4">
+      <li>
+        <strong>frontend</strong>
+        — <a class="link" href="/about">Next.js</a>
+        using <a
+          class="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://nextjs.org/docs/app"
+        >App router</a>.
+        <a
+          class="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://maplibre.org/maplibre-gl-js/docs"
+        >
+          MapLibre GL
+        </a>
+        map. GeoJSON served with <a
+          class="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://nextjs.org/docs/pages/building-your-application/routing/api-routes"
+        >Next API route</a>.
+      </li>
+      <li>
+        <strong>data collection</strong>
+        — Python script with
+        <a
+          class="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/codelucas/newspaper"
+        >
+          <code>newspaper3k</code>
+        </a>
+        library.
+      </li>
+      <li>
+        <strong>database</strong>
+        —
+        <a class="link" target="_blank" rel="noopener noreferrer" href="https://supabase.com/">
+          Supabase
+        </a>
+        SQL db with three tables to store articles, locations, and their relations.
+      </li>
+    </ul>
+    <h3 class="font-bold text-[1.25rem] pb-4">details</h3>
+    <p class="text-[1rem] font-light pb-4">
+      The Python script runs on a schedule in a <a
+        class="link"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://github.com/features/actions"
+      >Github Action</a>. It checks against a <a
+        class="link"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://github.com/ndemarchis/mapping-news/blob/main/public/feeds/feeds.csv"
+      >predetermined set of RSS feeds</a>, and determines whether any new articles have been added since it was last checked. If so it will pull relevant information from those articles and temporarily store them. The script runs more frequently during the middle of the day and less frequently overnight.
+    </p>
+    <p class="text-[1rem] font-light pb-4">
+      It then uses OpenAI’s
+      <a
+        class="link"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://openrouter.ai/openai/gpt-4o-mini-2024-07-18"
+      >
+        gpt-4o-mini-2024-07-18
+      </a>
+      model with the following prompt to extract the physical locations mentioned in the text of each article.
+    </p>
+    <blockquote class="px-4">
+      <p class="text-[1rem] font-light pb-4">
+        <code>
+          Your goal is to extract all points of interest and street addresses from the text provided.
+        </code>
+      </p>
+    </blockquote>
+    <p class="text-[1rem] font-light pb-4">
+      After we have relevant locations extracted, we use the
+      <a
+        class="link"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://developers.google.com/maps/documentation/geocoding/overview"
+      >
+        Google Maps Geocoding API
+      </a>
+      to determine their location. Any locations that are too generic to be mapped at this proof-of-concept stage — for instance, general county or state mentions — are removed.
+    </p>
+    <p class="text-[1rem] font-light pb-4">
+      Our database then receives information about the locations, the articles, and the relationship between the locations and articles.
+    </p>
+    <p class="text-[1rem] font-light pb-4">
+      On the frontend, whenever someone loads the page we use a
+      <a
+        class="link"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      >
+        Next.js Route Handler
+      </a>
+      to reformat our database information as GeoJSON. We then serve that GeoJSON to an MapLibre GL map.
+    </p>
+    <p class="text-[1rem] font-light pb-4">
+      When a user clicks a location, we use another route to handle database requests and pull the information of the articles that match the selected location.
+    </p>
+    <h3 class="font-bold text-[1.25rem] pb-4">blind spots</h3>
+    <p class="text-[1rem] font-light pb-4">There are issues, here are some:</p>
+    <ul class="list-disc pl-4">
+      <li>
+        The OpenAI model isn’t amazing at pulling out non-obvious locations, and sometimes is either too verbose or too general.
+      </li>
+      <li>
+        At this moment, we can only use publications that have working RSS feeds. Most still do, but not all.
+      </li>
+      <li>
+        We did our best to filter feeds by their metro/local reporting, when relevant. That could leave state- or federal-level news stories that have local impact off the map.
+      </li>
+    </ul>
+    <h3 class="font-bold text-[1.25rem] pb-4">next steps</h3>
+    <p class="text-[1rem] font-light pb-4">
+      There’s a lot of work left to do in regards to addressing problems found in the <a
+        class="link"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://github.com/ndemarchis/mapping-news/issues"
+      >issue tracker</a>. Read more <a class="link" href="#why">above</a>
+      to understand why we're building this.
+    </p>
+    <h2 class="font-bold text-[2rem] pb-4">further reading</h2>
+    <ul class="list-disc pl-4 [&amp;>li]:pb-2">
+      <li>
+        Z. Metzger, “The State of Local News,” Local News Initiative. Accessed: Dec. 31, 2024. [Online]. Available:
+        <a
+          class="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://localnewsinitiative.northwestern.edu/projects/state-of-local-news/2024/report/"
+        >
+          localnewsinitiative.northwestern.edu
+        </a>
+      </li>
+      <li>
+        G. Ariyarathne and A. C. Nwala, “3DLNews: A Three-decade Dataset of US Local News Articles,” in<span class="italic">Proceedings of the 33rd ACM International Conference on Information and Knowledge Management (CIKM ’24)</span>, New York, NY, USA: ACM, 2024, pp. 1–5. doi: <a
+          class="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://doi.org/10.1145/3627673.3679165"
+        >10.1145/3627673.3679165</a>.
+      </li>
+      <li>
+        <a
+          class="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.mediacloud.org/"
+        >
+          Media Cloud
+        </a>
+      </li>
+    </ul> --%>
+  </div>
+</div>

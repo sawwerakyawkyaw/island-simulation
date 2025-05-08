@@ -1,130 +1,115 @@
-<div class="flex flex-col w-screen min-h-screen gap-16 px-3 justify-center items-center">
-  <header class="text-center">
-    <h1 class="font-extrabold text-5xl">Island Sims</h1>
-    <p class="text-sm text-slate-500 mt-4">
-      Create a room and invite your friends to play or join an existing room!
-    </p>
-  </header>
-
-  <%= if @error do %>
-    <div class="bg-white border border-red-200 rounded-lg shadow-sm p-4">
-      <div class="flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 text-red-500"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        <p class="text-sm text-red-600 font-medium">{@error}</p>
-      </div>
-    </div>
-  <% end %>
-
-  <div class="flex flex-col md:flex-row gap-6">
-    <div class="w-72 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col flex-1">
-      <div class="p-6">
-        <form phx-submit="create_room" class="space-y-4">
-          <h2 class="font-bold text-lg">Create Room</h2>
-          <div>
-            <input
-              id="room_name"
-              name="room_name"
-              type="text"
-              required
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-950 focus:border-gray-950 focus:z-10 sm:text-sm"
-              placeholder="Enter room name"
-            />
-          </div>
-          <button
-            type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+<main class="flex-1 flex items-center justify-center">
+  <div class="flex flex-col gap-10">
+    <header class="text-center mt-8">
+      <h1 class="font-extrabold text-5xl">Island Sims</h1>
+      <p class="text-xs md:text-sm text-slate-500 mt-4 max-w-xs md:max-w-full mx-auto px-4 text-center">
+        Create a room and invite your friends to play or join an existing room!
+      </p>
+    </header>
+    <%= if @error do %>
+      <div class="bg-white border border-red-200 rounded-lg shadow-sm p-4">
+        <div class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-red-500"
+            viewBox="0 0 20 20"
+            fill="currentColor"
           >
-            Create
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col flex-1">
-      <div class="p-6">
-        <form phx-submit="join_room" class="space-y-4">
-          <h2 class="font-bold text-lg">Join Existing Room</h2>
-          <div>
-            <input
-              id="room_id"
-              name="room_id"
-              type="text"
-              required
-              class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-950 focus:border-gray-950 focus:z-10 sm:text-sm"
-              placeholder="Enter room ID"
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"
             />
-          </div>
-          <button
-            type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-          >
-            Join
-          </button>
-        </form>
+          </svg>
+          <p class="text-sm text-red-600 font-medium">{@error}</p>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <%= if @show_username_modal do %>
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col max-w-md w-full">
+    <% end %>
+    <div class="flex flex-col md:flex-row gap-6 items-center justify-center">
+      <!-- Create Room + Join Room Forms -->
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col flex-1">
         <div class="p-6">
-          <form phx-submit="submit_username" class="space-y-4">
-            <h2 class="font-bold text-lg">Enter Your Username</h2>
+          <form phx-submit="create_room" class="space-y-4">
+            <h2 class="font-bold text-lg">Create Room</h2>
             <div>
               <input
-                id="username"
-                name="username"
+                id="room_name"
+                name="room_name"
                 type="text"
                 required
                 class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-950 focus:border-gray-950 focus:z-10 sm:text-sm"
-                placeholder="Enter your username"
+                placeholder="Enter room name"
               />
             </div>
-            <div class="flex space-x-4">
-              <button
-                type="submit"
-                class="flex-1 group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-              >
-                Join Game
-              </button>
-              <button
-                type="button"
-                phx-click="close_modal"
-                class="flex-1 group relative flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-950 focus:border-gray-950"
-              >
-                Cancel
-              </button>
+            <button
+              type="submit"
+              class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            >
+              Create
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col flex-1">
+        <div class="p-6">
+          <form phx-submit="join_room" class="space-y-4">
+            <h2 class="font-bold text-lg">Join Existing Room</h2>
+            <div>
+              <input
+                id="room_id"
+                name="room_id"
+                type="text"
+                required
+                class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-950 focus:border-gray-950 focus:z-10 sm:text-sm"
+                placeholder="Enter room ID"
+              />
             </div>
+            <button
+              type="submit"
+              class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            >
+              Join
+            </button>
           </form>
         </div>
       </div>
     </div>
-  <% end %>
-  <footer class="text-center">
-    <p class="text-sm text-gray-500">
-      Created by
-      <a
-        href="https://sawwerakyawkyaw.com"
-        class="text-gray-700 hover:text-teal-500 hover:no-underline hover:font-bold transition-all duration-300 ease-in-out underline underline-offset-4 decoration-indigo-700 decoration-2"
-      >
-        Saw Wera Kyaw Kyaw
-      </a>
-      &
-      <a class="text-gray-700 hover:text-teal-500 hover:no-underline hover:font-bold transition-all duration-300 ease-in-out underline underline-offset-4 decoration-indigo-700 decoration-2">
-        Sarah Madolnado
-      </a>
-    </p>
-  </footer>
-</div>
+    <%= if @show_username_modal do %>
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col max-w-md w-full">
+          <div class="p-6">
+            <form phx-submit="submit_username" class="space-y-4">
+              <h2 class="font-bold text-lg">Enter Your Username</h2>
+              <div>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-gray-950 focus:border-gray-950 focus:z-10 sm:text-sm"
+                  placeholder="Enter your username"
+                />
+              </div>
+              <div class="flex space-x-4">
+                <button
+                  type="submit"
+                  class="flex-1 group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-950 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                >
+                  Join Game
+                </button>
+                <button
+                  type="button"
+                  phx-click="close_modal"
+                  class="flex-1 group relative flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-950 focus:border-gray-950"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</main>

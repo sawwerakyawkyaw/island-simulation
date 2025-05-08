@@ -1,9 +1,17 @@
-<main class="">
-  <div class="">
-    <.flash_group flash={@flash} />
-    {@inner_content}
-  </div>
-</main>
+<!-- layout/app.html.heex or wherever your layout is defined -->
+<div class="min-h-screen flex flex-col">
+  <!-- Navbar is fixed -->
+  <.navbar />
+  
+<!-- Flash messages if any -->
+  <.flash_group flash={@flash} />
+  
+<!-- Content area that grows to fill the space between nav and footer -->
+  {@inner_content}
+  
+<!-- Footer always at bottom, part of layout -->
+  <.footer />
+</div>
 
 <%!-- <main class="px-4 py-0 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-2xl">
