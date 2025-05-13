@@ -1,5 +1,8 @@
 defmodule IslandGameWeb.AdminLive do
-  use Phoenix.LiveView
+  @moduledoc """
+  Provides administrative controls and views for managing the game.
+  """
+  use IslandGameWeb, :live_view
   alias IslandGame.GameServer
 
   @default_weather_params %{

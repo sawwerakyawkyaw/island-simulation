@@ -126,6 +126,9 @@ defmodule IslandGame.GameServer do
   end
 
   # Client API
+  @doc """
+  Starts the GenServer and links it to the current process.
+  """
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
@@ -161,10 +164,16 @@ defmodule IslandGame.GameServer do
   end
 
   # Server Callbacks
+  @doc """
+  Initializes the GenServer state with an empty map of rooms.
+  """
   def init(_) do
     {:ok, %{}}
   end
 
+  @doc """
+  Handles the :create_room call, adding a new room to the state if the ID doesn't exist.
+  """
   def handle_call({:create_room, room_id, room_name}, _from, rooms) do
     if Map.has_key?(rooms, room_id) do
       {:reply, {:error, :room_exists}, rooms}
@@ -187,6 +196,7 @@ defmodule IslandGame.GameServer do
     end
   end
 
+  # Handles the :get_room call, returning the room details or :not_found.
   def handle_call({:get_room, room_id}, _from, rooms) do
     case Map.get(rooms, room_id) do
       nil -> {:reply, {:error, :not_found}, rooms}
@@ -194,6 +204,7 @@ defmodule IslandGame.GameServer do
     end
   end
 
+  # Handles the :start_game call, marking a room as started if it exists and hasn't started.
   def handle_call({:start_game, room_id}, _from, rooms) do
     case Map.get(rooms, room_id) do
       nil ->
@@ -210,6 +221,7 @@ defmodule IslandGame.GameServer do
     end
   end
 
+  # Handles the :game_started? call, returning true or false if the room exists.
   def handle_call({:game_started?, room_id}, _from, rooms) do
     case Map.get(rooms, room_id) do
       nil -> {:reply, {:error, :not_found}, rooms}
@@ -217,6 +229,7 @@ defmodule IslandGame.GameServer do
     end
   end
 
+  # Generates a normally distributed random number given a mean and standard deviation.
   defp gaussian(mean, std_dev) do
     x = :rand.uniform()
     y = :rand.uniform()
@@ -224,11 +237,14 @@ defmodule IslandGame.GameServer do
     z * std_dev + mean
   end
 
+  # Generates an exponentially distributed random number given a lambda (rate parameter).
   defp exponential(lambda) when lambda > 0 do
     -:math.log(1 - :rand.uniform()) / lambda
   end
 
-  # Use :rand.normal/2 → mean and std dev
+  # Use :rand.normal/2 -> mean and std dev
+  # Determines if an extreme event occurs based on a given probability.
+  # Returns a tuple {:extreme_event, event_name} or {:no_event}.
   defp gaussian_random_event(probability) do
     # Centered at slider value, e.g., 0–100
     mean = probability

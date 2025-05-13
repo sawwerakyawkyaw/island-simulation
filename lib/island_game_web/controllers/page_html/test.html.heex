@@ -1,7 +1,10 @@
 <div class="min-h-screen flex flex-col">
   <div class="flex-1 flex items-center justify-center px-4 py-0 sm:px-6 lg:px-8">
-    <div class="max-w-sm w-full h-full p-6">
-      <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-4">
+    <div class="max-w-6xl w-full h-full flex gap-4 items-stretch">
+      <!-- Form Card -->
+      <div class="flex-1 max-w-sm w-full h-full bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+        <!-- content inside remains unchanged -->
+        <!-- your season + form content here -->
         <p class="text-sm font-medium text-gray-900">
           <div class="text-md text-gray-850 font-medium">current season:</div>
           <div class="font-extrabold text-[2.5rem] tracking-wider text-gray-950 leading-none">
@@ -103,44 +106,20 @@
           </form>
         </div>
       </div>
-    </div>
-
-    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-4">
-      <p class="text-sm font-medium text-gray-900">
-        <div class="text-md text-gray-850 font-medium">current season:</div>
-        <div class="font-extrabold text-[2.5rem] tracking-wider text-gray-950 leading-none">
-          Rainy/Cool
-        </div>
-      </p>
       
-<!-- Chart Section -->
-      <div class="mt-6">
-        <h3 class="text-md text-gray-850 font-medium mb-4">Seasonal Trends</h3>
-        <div class="h-48 flex items-end space-x-2">
-          <!-- Spring -->
-          <div class="flex-1 flex flex-col items-center">
-            <div class="w-full bg-blue-200 rounded-t" style="height: 60%"></div>
-            <span class="text-xs text-gray-600 mt-2">Spring</span>
-          </div>
-          <!-- Summer -->
-          <div class="flex-1 flex flex-col items-center">
-            <div class="w-full bg-yellow-200 rounded-t" style="height: 90%"></div>
-            <span class="text-xs text-gray-600 mt-2">Summer</span>
-          </div>
-          <!-- Fall -->
-          <div class="flex-1 flex flex-col items-center">
-            <div class="w-full bg-orange-200 rounded-t" style="height: 70%"></div>
-            <span class="text-xs text-gray-600 mt-2">Fall</span>
-          </div>
-          <!-- Winter -->
-          <div class="flex-1 flex flex-col items-center">
-            <div class="w-full bg-blue-100 rounded-t" style="height: 40%"></div>
-            <span class="text-xs text-gray-600 mt-2">Winter</span>
-          </div>
+<!-- Chart Card -->
+      <div class="flex-1 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+        <div class="font-extrabold text-[2.5rem] tracking-wider text-gray-950 leading-none">
+          Population Trend
         </div>
-        <div class="mt-4 flex justify-between text-xs text-gray-500">
-          <span>Temperature Range</span>
-          <span>Precipitation</span>
+
+        <div class="mt-6 h-full">
+          <canvas
+            class="w-full h-full max-h-[600px]"
+            id="my-chart"
+            phx-hook="Chart"
+            data-config={Jason.encode!(@config)}
+          />
         </div>
       </div>
     </div>

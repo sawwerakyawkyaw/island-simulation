@@ -17,9 +17,12 @@ defmodule IslandGameWeb.Router do
   scope "/", IslandGameWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
+    get "/testC", PageController, :test
     live "/test", TestLive
-    live "/home", HomeLive
+
+    # The main routes for the game
+    live "/", HomeLive
     live "/lobby/:room_id", LobbyLive
     live "/game/:room_id/user", UserLive
     live "/game/:room_id/admin", AdminLive

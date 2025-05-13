@@ -24,7 +24,7 @@ import topbar from "../vendor/topbar";
 import UpdateTotalFields from "./hooks/update_total_fields";
 import TemperatureSlider from "./hooks/temperature_slider";
 import ExtremeEventSlider from "./hooks/extreme_event_slider";
-// import Chart from "chart.js/auto";
+import Chart from "chart.js/auto";
 let Hooks = {};
 
 // Chart Hook

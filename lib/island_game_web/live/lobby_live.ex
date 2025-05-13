@@ -1,8 +1,15 @@
 defmodule IslandGameWeb.LobbyLive do
+  @moduledoc """
+  Handles the game lobby, allowing users to join or create games.
+  """
   use IslandGameWeb, :live_view
   alias IslandGame.GameServer
   require Logger
 
+  @doc """
+  Mounts the LobbyLive view, subscribes to room events, and assigns initial state.
+  Redirects if the room is not found.
+  """
   def mount(%{"room_id" => room_id}, _session, socket) do
     Logger.info("Attempting to mount lobby for room: #{room_id}")
 
@@ -29,6 +36,10 @@ defmodule IslandGameWeb.LobbyLive do
     end
   end
 
+  @doc """
+  Handles the "start_game" event, attempting to start the game for the current room.
+  Redirects to the admin game view on success or shows an error flash.
+  """
   def handle_event("start_game", _params, socket) do
     case GameServer.start_game(socket.assigns.room_id) do
       {:ok, _game} ->
@@ -44,6 +55,9 @@ defmodule IslandGameWeb.LobbyLive do
     end
   end
 
+  @doc """
+  Handles the "user_joined" info message, updating the list of joined users.
+  """
   def handle_info(
         %{event: "user_joined", payload: %{username: username, joined_at: joined_at}},
         socket

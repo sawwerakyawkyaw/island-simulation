@@ -1,4 +1,7 @@
 defmodule IslandGameWeb.UserLive do
+  @moduledoc """
+  Manages user-specific views and interactions within the game.
+  """
   use IslandGameWeb, :live_view
   alias IslandGame.GameServer
 
@@ -19,6 +22,9 @@ defmodule IslandGameWeb.UserLive do
   ]
 
   @impl true
+  @doc """
+  Mounts the UserLive view, subscribes to game events, and initializes user-specific state and chart.
+  """
   def mount(%{"room_id" => room_id, "username" => username}, _session, socket) do
     user_id = Enum.random(1..999)
     topic = "game:#{room_id}"
@@ -58,12 +64,19 @@ defmodule IslandGameWeb.UserLive do
   end
 
   @impl true
+  @doc """
+  Handles the "new_round" event, updating the game data displayed to the user.
+  """
   def handle_info(%{event: "new_round", payload: game_data}, socket) do
     IO.inspect(game_data)
     {:noreply, assign(socket, :game_data, game_data)}
   end
 
   @impl true
+  @doc """
+  Handles the "submit_response" event, processing the user's choices for the round.
+  Calculates new population, updates chart data, and broadcasts the response.
+  """
   def handle_event("submit_response", %{"fields" => fields}, socket) do
     total_fields =
       fields
@@ -128,6 +141,9 @@ defmodule IslandGameWeb.UserLive do
        |> assign(:chart_config, chart_config)}
     end
   end
+
+
+  # Generates labels for chart rounds (e.g., "Round-1", "Round-2").
 
   defp generate_round_labels(current_round) do
     1..current_round

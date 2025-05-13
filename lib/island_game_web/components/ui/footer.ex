@@ -1,6 +1,13 @@
 defmodule IslandGameWeb.Components.UI.Footer do
   use Phoenix.Component
 
+  @doc """
+  Renders a footer.
+
+  ## Examples
+    <.footer/>
+  """
+
   def footer(assigns) do
     ~H"""
     <footer class="text-center max-w-sm md:max-w-full mx-auto mb-6">
